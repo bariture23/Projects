@@ -1,0 +1,68 @@
+#start of code
+class Main:
+    #defining values, expression, etc
+    def evaluate(expression):
+        tokens = list(expression)
+        values = []
+        ops = []
+        i = 0
+        #defining variable
+        while i < len(tokens):
+            if tokens[i] == ' ':
+                i += 1
+                continue
+            if tokens[i] >= '0' and tokens[i] <= '9':
+                #numbers 0-9 are all valid
+                sbuf = []
+                while i < len(tokens) and tokens[i] >= '0' and tokens[i] <= '9':
+                    sbuf.append(tokens[i])
+                    i += 1
+                values.append(int(''.join(sbuf)))
+                i -= 1
+                #elif loop 
+            elif tokens[i] == '(':
+                ops.append(tokens[i])
+            elif tokens[i] == ')':
+                while ops[-1] != '(':
+                    values.append(Main.applyOp(ops.pop(), values.pop(), values.pop()))
+                ops.pop()
+            elif tokens[i] == '+' or tokens[i] == '-' or tokens[i] == '*' or tokens[i] == '/':
+                while ops and Main.hasPrecedence(tokens[i], ops[-1]):
+                    values.append(Main.applyOp(ops.pop(), values.pop(), values.pop()))
+                ops.append(tokens[i])
+            i += 1
+        while ops:
+            values.append(Main.applyOp(ops.pop(), values.pop(), values.pop()))
+        return values.pop()
+        #end of loop that contain the values
+
+    
+    def hasPrecedence(op1, op2):
+        if op2 == '(' or op2 == ')':
+            return False
+        if (op1 == '*' or op1 == '/') and (op2 == '+' or op2 == '-'):
+            return False
+        else:
+            return True
+
+    
+    def applyOp(op, b, a):
+        if op == '+':
+            return a + b
+            #defining addition
+        elif op == '-':
+            return a - b
+            #defining subtratcion
+        elif op == '*':
+            return a * b
+            #defining multiplication
+        elif op == '/':
+            if b == 0:
+        #defining division
+                raise ZeroDivisionError("Cannot divide by zero")
+            return a / b
+        return 0
+#end of loop
+exp = input("Enter expression: ")
+print("Evaluation =", Main.evaluate(exp))
+#end of code
