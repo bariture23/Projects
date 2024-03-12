@@ -1,0 +1,39 @@
+def main():
+    print("Enter the string expression : ")
+    str = input()
+    num = findResult(str)
+    print("\n\nResult : ", num)
+#defining the result and printing it 
+def findResult(str):
+    oper = str.split(" ")
+    stk = []
+    n1 = 0
+    n2 = 0
+    #finding the result 
+    for i in range(len(oper)):
+        if oper[i] == "+":
+            num1 = stk.pop()
+            num2 = stk.pop()
+            stk.append(num1 + num2)
+            #defining the cal when adding using a if looop
+        elif oper[i] == "-":
+            num1 = stk.pop()
+            num2 = stk.pop()
+            stk.append(num1 - num2)
+            #defining the cal when subtracting using a elif looop
+        elif oper[i] == "*":
+            num1 = stk.pop()
+            num2 = stk.pop()
+            stk.append(num1 * num2)
+            #defining the cal when multiplying using a elif looop
+        elif oper[i] == "/":
+            num1 = stk.pop()
+            num2 = stk.pop()
+            stk.append(num1 / num2)
+            #defining the cal when dividing using a if looop
+        else:
+            num = int(oper[i])
+            stk.append(num)
+    
+    return stk[-1]
+    #end of if loop
