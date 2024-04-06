@@ -1,0 +1,37 @@
+SYS_READ   equ     0          ; read text from stdin
+SYS_WRITE  equ     1          ; write text to stdout
+STDIN      equ     0          ; standard input
+STDOUT     equ     1          ; standard output
+
+       section .bss           ; Uninit data section
+    mybuffer: resb     10      ; reserve 10 bytes
+section .data
+
+        read_again:    db "%d", 0
+        temp:
+        eof_reached:
+
+section .text
+        global main
+
+
+    main:
+        mov     rsi, mybuffer           ; where to store chars read
+        mov     rdi, STDIN              ; fd of input
+            mov     rdx, 1                  ; characters to read
+        mov     rax, SYS_READ           ; function to call
+        syscall
+
+        mov     [temp], eax             ; number of chars read
+        cmp     eax, 0
+        je      eof_reached             ; Did we read 0 chars?
+
+                                        ; if we read 0 chars, we got EOF
+        jmp     read_again              ; Read another character
+
+        push    rbp                 ; remember RBP
+        mov     rbp, rsp
+        mov     rsp, rbp            ; restore RBP
+        pop     rbp                 ; same as "leave" op
+        syscall
+        ret
