@@ -1,0 +1,81 @@
+#include <stdio.h> #include <stdlib.h> #include <time.h> #include <string.h>
+
+#define TRIES 10
+#define DIGITS 3
+#define RANGE 9
+
+void generateCode(int *code) { int i;
+for (i = 0; i < DIGITS; i++) {
+code[i] = rand() % (RANGE + 1);
+}
+}
+
+int validateInput(char *input, int *guess) { int i;
+if (strlen(input) != DIGITS) return 0; for (i = 0; i < DIGITS; i++) {
+if (input[i] < '0' || input[i] > '9') return 0; guess[i] = input[i] - '0';
+}
+return 1;
+}
+
+void getUserInput(int *guess) { char input[100];
+while (1) {
+printf("What is the code? "); scanf("%s", input);
+
+if (input[0] == 'q' || input[0] == 'Q') { exit(0);
+}
+
+if (validateInput(input, guess)) break;
+printf("Invalid input. Please enter exactly %d digits.\n", DIGITS);
+}
+}
+
+int compareCode(int *code, int *guess, int *correct_pos, int *correct_digit) { int i;
+
+*correct_pos = 0;
+*correct_digit = 0;
+
+int code_count[RANGE + 1] = {0};
+int guess_count[RANGE + 1] = {0};
+
+for (i = 0; i < DIGITS; i++) {
+if (code[i] == guess[i]) { (*correct_pos)++;
+} else {
+code_count[code[i]]++; guess_count[guess[i]]++;
+}
+}
+
+for (i = 0; i <= RANGE; i++) {
+    *correct_digit += (code_count[i] < guess_count[i]) ? code_count[i] : guess_count[i];
+}
+
+return (*correct_pos == DIGITS);
+}
+
+int main() { srand(time(0));
+
+int code[DIGITS]; int guess[DIGITS];
+
+generateCode(code);
+printf("Welcome to the Code Guessing Game!\n"); int tries;
+for (tries = TRIES; tries > 0; tries--) { printf("%d tries remaining. ", tries);
+
+getUserInput(guess);
+
+int correct_pos, correct_digit;
+if (compareCode(code, guess, &correct_pos, &correct_digit)) { printf("You opened the vault\n");
+return 0;
+} else {
+
+       printf("Too %s, %d digits are correct and in the right place, %d digits are correct and in the wrong place.\n",
+(guess[0] < code[0] ? "low" : "high"), correct_pos, correct_digit);
+}
+}
+
+printf("You failed to open the vault. The correct code was "); int i;
+for (i = 0; i < DIGITS; i++) {
+printf("%d", code[i]);
+}
+printf("\n");
+
+return 0;
+}
